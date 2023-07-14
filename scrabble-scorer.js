@@ -1,3 +1,7 @@
+/*
+Author: Kara Allison
+Date: 7/14/2023
+*/
 // This assignment is inspired by a problem on Exercism (https://exercism.org/tracks/javascript/exercises/etl) that demonstrates Extract-Transform-Load using Scrabble's scoring system. 
 
 const input = require("readline-sync");
@@ -28,34 +32,41 @@ function oldScrabbleScorer(word) {
 	}
 	return letterPoints;
  }
-
+// converts old scrabble point structure to new more efficient structure
  function transform(oldStruct) {
    let newStruct = {};
+   // iterate over each property 
    for (item in oldStruct) {
+      // iterate over the array value in property
       for (j = 0; j < oldStruct[item].length; j++) {
+         // add a property (letter from array from old structure) to the new structure with value (number property from old structure)
          newStruct[oldStruct[item][j].toLowerCase()] = Number(item);
       }
    }
    return newStruct;
-};
+}
 
 // your job is to finish writing these functions and variables that we've named //
 // don't change the names or your program won't work as expected. //
 
+// prompt user for input and return input
 function initialPrompt() {
    console.log("Let's play some scrabble!\n");
    let word = input.question("Enter a word to score: ");
    return word;
 };
 
+// basic score by length
 let simpleScorer = function(word) {
    return word.length;
 };
 
+// vowelbonus scoring function
 let vowelBonusScorer = function(word) {
    let wordArray = word.toLowerCase().split('');
    let score = 0;
    for (i = 0; i < wordArray.length; i++) {
+      //checks for vowel
       if (wordArray[i] === 'a' || wordArray[i] === 'e' || wordArray[i] === 'i' ||
       wordArray[i] === 'o' || wordArray[i] === 'u') {
          score += 3;
@@ -66,20 +77,21 @@ let vowelBonusScorer = function(word) {
    return score;
 };
 
+// Build new struct from transform, lowercase letter keys and number values
 let newPointStructure = transform(oldPointStructure);
 
+// Uses newPointStructure to score, scrabble rules
 let scrabbleScorer = function(word) {
    let wordArray = word.toLowerCase().split('');
    let score = 0;
    for (i = 0; i < wordArray.length; i++) {
-      // console.log(wordArray[i])
-      // console.log(newPointStructure)
-      // console.log(newPointStructure[wordArray[i]])
+      // use letter key to add value pair to score
       score += newPointStructure[wordArray[i]];
    }
    return score;
 };
 
+// Array to store scoring objects
 const scoringAlgorithms = [
    {
       'name': 'Simple Score',
@@ -96,6 +108,7 @@ const scoringAlgorithms = [
    }
 ];
 
+// Prompt returns the algorithm chosen for scoring
 function scorerPrompt() {
    let index = input.question(`Which scoring algorithm would you like to use?
 
@@ -105,7 +118,7 @@ function scorerPrompt() {
 Enter 0, 1, or 2: `);
   return scoringAlgorithms[Number(index)];
 }
-
+// routine called from index to run the program
 function runProgram() {
    let word = initialPrompt();
    let score = scorerPrompt().scorerFunction(word);
