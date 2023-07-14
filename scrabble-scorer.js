@@ -46,19 +46,60 @@ function oldScrabbleScorer(word) {
    return newStruct;
 }
 
+// Build new struct from transform, lowercase letter keys and number values
+let newPointStructure = transform(oldPointStructure);
+// Add space as valid character
+newPointStructure[' '] = 0;
+
 // your job is to finish writing these functions and variables that we've named //
 // don't change the names or your program won't work as expected. //
+
+function wordValidation(word) {
+   if (word === ''){
+      return false;
+   }
+   word = word.toLowerCase();
+   for (i = 0; i < word.length; i++) {
+      if (isFinite(newPointStructure[word[i]])) {
+         continue;
+      } else {
+         return false;
+      }
+   }
+   return true;
+}
+
+function indexValidation(index, start, end) {
+   if (isNaN(Number(index))) {
+      return false;
+   }
+   if (index < start || index > end) {
+      return false;
+   } else {
+      return true;
+   }
+
+}
 
 // prompt user for input and return input
 function initialPrompt() {
    console.log("Let's play some scrabble!\n");
    let word = input.question("Enter a word to score: ");
+   while (!wordValidation(word)) {
+      word = input.question("Enter a valid word, only alphabetic characters and space are allowed: ")
+   }
    return word;
 };
 
 // basic score by length
 let simpleScorer = function(word) {
-   return word.length;
+   let spaceCount = 0;
+   for (i = 0; i < word.length; i++) {
+      if (word[i] === ' ') {
+         spaceCount++;
+      }
+   }
+   return word.length - spaceCount;
 };
 
 // vowelbonus scoring function
@@ -70,15 +111,14 @@ let vowelBonusScorer = function(word) {
       if (wordArray[i] === 'a' || wordArray[i] === 'e' || wordArray[i] === 'i' ||
       wordArray[i] === 'o' || wordArray[i] === 'u') {
          score += 3;
+      } else if (wordArray[i] === ' ') {
+         continue;
       } else {
          score += 1;
       }
    }
    return score;
 };
-
-// Build new struct from transform, lowercase letter keys and number values
-let newPointStructure = transform(oldPointStructure);
 
 // Uses newPointStructure to score, scrabble rules
 let scrabbleScorer = function(word) {
@@ -116,14 +156,19 @@ function scorerPrompt() {
 1 - ${scoringAlgorithms[1].description}
 2 - ${scoringAlgorithms[2].description}
 Enter 0, 1, or 2: `);
+  while (!indexValidation(index,0,2)) {
+   index = input.question('Enter a valid number, 0, 1, or 2: ')
+  }
   return scoringAlgorithms[Number(index)];
 }
 // routine called from index to run the program
 function runProgram() {
+   // while(true) {
    let word = initialPrompt();
    let score = scorerPrompt().scorerFunction(word);
    console.log(`Score for '${word}': ${score}`);
    // console.log(oldScrabbleScorer(word));
+// }
    
 }
 
